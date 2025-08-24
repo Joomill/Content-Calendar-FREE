@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="5.0" client="administrator" method="upgrade">
+    <name>MOD_CONTENTCALENDAR</name>
+    <description>MOD_CONTENTCALENDAR_XML_DESCRIPTION</description>
+    <version>1.0.0</version>
+    <creationDate>September 2025</creationDate>
+    <copyright>2025 Joomill Extensions</copyright>
+    <license>GNU General Public License version 3 or later;</license>
+    <author>Jeroen Moolenschot | Joomill</author>
+    <authorEmail>info@joomill-extensions.com</authorEmail>
+    <authorUrl>https://www.joomill-extensions.com</authorUrl>
+    <namespace path="src">Joomill\Module\Contentcalendar</namespace>
+
+    <!-- Script -->
+    <scriptfile>script.php</scriptfile>
+
+    <!-- Files -->
+    <files>
+        <filename module="mod_contentcalendar">mod_contentcalendar.php</filename>
+        <folder>language</folder>
+        <folder>services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <filename>mod_contentcalendar.xml</filename>
+    </files>
+
+    <!-- Media -->
+    <media destination="mod_contentcalendar" folder="media">
+        <folder>css</folder>
+        <folder>js</folder>
+    </media>
+
+    <!-- Parameters -->
+    <config>
+        <fields
+                name="params"
+                addfieldprefix="Joomill\Module\Contentcalendar\Administrator\Field"
+        >
+            <fieldset name="basic">
+                <field
+                        name="categories"
+                        type="category"
+                        extension="com_content"
+                        multiple="true"
+                        label="MOD_CONTENTCALENDAR_CATEGORIES_LABEL"
+                        description="MOD_CONTENTCALENDAR_CATEGORIES_DESCRIPTION"
+                        default=""
+                />
+                <field
+                        name=""
+                        type="upgrade"
+                />
+            </fieldset>
+            <fieldset name="display">
+                <fieldset name="layout">
+                    <field
+                            name="layout"
+                            type="pro"
+                            label="JFIELD_ALT_LAYOUT_LABEL"
+                            description="JFIELD_ALT_MODULE_LAYOUT_DESC"
+                    />
+                    <field
+                            name="show_last_week"
+                            type="pro"
+                            label="MOD_CONTENTCALENDAR_SHOW_LAST_WEEK_LABEL"
+                            description="MOD_CONTENTCALENDAR_SHOW_LAST_WEEK_DESC"
+                    />
+                    <field
+                            name="weeks_count"
+                            type="pro"
+                            label="MOD_CONTENTCALENDAR_WEEKS_COUNT_LABEL"
+                            description="MOD_CONTENTCALENDAR_WEEKS_COUNT_DESC"
+                    />
+                </fieldset>
+                <fieldset name="colors">
+                    <field
+                            name="color_mode"
+                            type="pro"
+                            label="MOD_CONTENTCALENDAR_COLOR_MODE_LABEL"
+                            description="MOD_CONTENTCALENDAR_COLOR_MODE_DESC"
+                    />
+                </fieldset>
+            </fieldset>
+            <fieldset name="article_defaults" label="MOD_CONTENTCALENDAR_FIELDSET_ARTICLE_DEFAULTS">
+                <field
+                        name="allow_add_articles"
+                        type="pro"
+                        label="MOD_CONTENTCALENDAR_ALLOW_ADD_ARTICLES_LABEL"
+                        description="MOD_CONTENTCALENDAR_ALLOW_ADD_ARTICLES_DESC"
+                />
+                <field
+                        name="default_publish_time"
+                        type="pro"
+                        label="MOD_CONTENTCALENDAR_DEFAULT_PUBLISH_TIME_LABEL"
+                        description="MOD_CONTENTCALENDAR_DEFAULT_PUBLISH_TIME_DESC"
+                />
+                <field
+                        name="default_category"
+                        type="pro"
+                        label="MOD_CONTENTCALENDAR_DEFAULT_CATEGORY_LABEL"
+                        description="MOD_CONTENTCALENDAR_DEFAULT_CATEGORY_DESC"
+                />
+            </fieldset>
+            <fieldset name="advanced">
+                <field
+                        name="moduleclass_sfx"
+                        type="text"
+                        label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                        description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"
+                />
+                <field
+                        name="header_icon"
+                        type="text"
+                        label="Header Icon"
+                        default="fa-solid fa-calendar"
+                />
+
+            </fieldset>
+        </fields>
+    </config>
+
+    <!-- Changelog -->
+    <changelogurl>
+        <![CDATA[https://www.joomill-extensions.com/index.php?option=com_ochsubscriptions&amp;view=changelog&amp;format=xml&amp;cat=26]]></changelogurl>
+
+    <!-- Updateserver -->
+    <updateservers>
+        <server type="extension" priority="1" name="Joomill Content Calendar FREE">
+            <![CDATA[https://www.joomill-extensions.com/index.php?option=com_ochsubscriptions&amp;view=updater&amp;format=xml&amp;cat=26]]></server>
+    </updateservers>
+</extension>
