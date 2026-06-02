@@ -26,7 +26,6 @@ $separator = (strpos($base_url, '?') !== false) ? '&' : '?';
 
 // Build return parameter to come back to this dashboard URL after editing
 $return_param = base64_encode(Uri::getInstance()->toString());
-$return_raw   = Uri::getInstance()->toString();
 ?>
 
 <div class="mod-contentcalendar default-view <?php

@@ -16,9 +16,8 @@
 
     <!-- Files -->
     <files>
-        <filename module="mod_contentcalendar">mod_contentcalendar.php</filename>
+        <folder module="mod_contentcalendar">services</folder>
         <folder>language</folder>
-        <folder>services</folder>
         <folder>src</folder>
         <folder>tmpl</folder>
         <filename>mod_contentcalendar.xml</filename>

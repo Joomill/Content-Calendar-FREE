@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A Joomla 5 **administrator** module (`mod_contentcalendar`, `client="administrator"`) that renders a monthly calendar of `com_content` articles in the admin backend, grouped by `publish_up` date. This is the **FREE** edition of a commercial product (Joomill Content Calendar PRO); most configurable behavior is intentionally stubbed and gated behind PRO.
+A Joomla **administrator** module (`mod_contentcalendar`, `client="administrator"`) that renders a monthly calendar of `com_content` articles in the admin backend, grouped by `publish_up` date. Targets Joomla 5 and 6. This is the **FREE** edition of a commercial product (Joomill Content Calendar PRO); most configurable behavior is intentionally stubbed and gated behind PRO.
 
 The repo root holds a packaging artifact (`mod_contentcalendar_v1.0.0.zip`); the actual source lives in `mod_contentcalendar/`.
 
@@ -15,29 +15,29 @@ There is no build system, package manager, linter config, or test suite. It is a
 - **Install / package:** zip the *contents* of `mod_contentcalendar/` (so `mod_contentcalendar.xml` sits at the zip root) and install via Joomla's Extension Manager. The XML uses `method="upgrade"`, so reinstalling over an existing copy updates it.
 - **Local dev:** Laragon at `C:\laragon\www\dev\extensions\`. Edit files in place inside a Joomla install's `administrator/modules/mod_contentcalendar/` to test live, or reinstall the zip.
 - **Code style:** Joomla CMS standard (tab indentation, `defined('_JEXEC') or die;` guard on every PHP file, `@since` docblocks). Match the surrounding style; do not reformat to PSR-12 spaces.
+- **Syntax check:** there are no tests, but you can lint PHP locally, e.g. `& "C:\laragon\bin\php\php-8.3.26-Win32-vs16-x64\php.exe" -l <file>`. The Joomla 6 source for reference is at `C:\laragon\www\joomla6`.
 
 ## Architecture
 
-### Two parallel entry points (keep both in sync)
+### Entry point and request flow
 
-Joomla loads the module through the modern dispatcher, but a legacy entry file also exists and **duplicates the same orchestration logic**:
+The module renders through the standard Joomla dispatcher; there is **no** legacy `mod_contentcalendar.php` entry file (Joomla 6 does not fall back to one when a Dispatcher class exists).
 
-1. **Modern path:** `services/provider.php` registers the DI container services, which construct `src/Dispatcher/Dispatcher.php`. `Dispatcher::getLayoutData()` builds the calendar data and hands it to the template.
-2. **Legacy path:** `mod_contentcalendar.php` manually instantiates the services (`new DataAccessService(Factory::getDbo())`, `new BusinessLogicService()`) and runs the same steps, then `require`s the layout.
+`services/provider.php` registers the `ModuleDispatcherFactory`, `HelperFactory`, and core `Module` service provider. Joomla's dispatcher factory instantiates `src/Dispatcher/Dispatcher.php` with the standard `($module, $app, $input)` signature, so the Dispatcher does **not** override the constructor. `Dispatcher::getLayoutData()` reads `params`/`app` from `parent::getLayoutData()`, resolves the database from the DI container (`DatabaseInterface::class`), instantiates the two services, gates article loading on `core.manage` for `com_content`, and hands the calendar data to the template.
 
-If you change the data-preparation flow (params read, validation, query, organize, prepare), update **both** files or behavior will diverge depending on how Joomla resolves the module.
+> Historical note: an earlier version overrode the constructor with `(DataAccessService, BusinessLogicService)` and shipped a duplicate `mod_contentcalendar.php`. That constructor signature does not match what the factory passes, so it fataled on Joomla 6. Do not reintroduce constructor injection into a module dispatcher — the factory does not support it; resolve dependencies inside `getLayoutData()`.
 
 ### Service split
 
-Business logic is deliberately separated from data access; both are plain classes registered in the container:
+Business logic is deliberately separated from data access; both are plain classes instantiated by the Dispatcher:
 
-- **`src/Service/DataAccessService.php`** — all DB work via `DatabaseInterface`. Queries `#__content` joined to users/categories/tags. Catches exceptions and surfaces them through `enqueueMessage`, returning `[]`/`false` on failure rather than throwing.
+- **`src/Service/DataAccessService.php`** — all DB work via `DatabaseInterface`, using `quoteName` + bound parameters and a portable `publish_up` range filter (no MySQL-only `YEAR()`/`MONTH()`/`GROUP_CONCAT`). Tags are fetched in a separate query and merged in PHP (`attachTags`). Catches exceptions, logs via `Log::add`, returns `[]`/`false`.
 - **`src/Service/BusinessLogicService.php`** — pure date/calendar math: `validateMonthYear`, `calculateNavigation`, `organizeArticlesByDay`, `prepareCalendarData`, plus week-grid helpers. No DB or request access.
-- **`src/Helper/ContentCalendarHelper.php`** — legacy static helper bridge. In FREE it is reduced to `getItemColorSimple()` returning a single hardcoded color (`#1a73e8`).
+- **`src/Helper/ContentCalendarHelper.php`** — static helper bridge. In FREE it is reduced to `getItemColorSimple()` returning a single hardcoded color (`#1a73e8`).
 
-### Namespace quirk
+### Namespace
 
-The XML declares the base namespace `Joomill\Module\Contentcalendar` (path `src`), but the actual classes live under `Joomill\Module\Contentcalendar\Administrator\...` (note the `Administrator` segment — standard for admin-client modules). The DI registrations and `addfieldprefix` in the XML reflect this. `services/provider.php` itself sits in the lowercase `services` namespace.
+The XML declares the base namespace `Joomill\Module\Contentcalendar` (path `src`); classes live under `Joomill\Module\Contentcalendar\Administrator\...` (the `Administrator` segment is standard for admin-client modules). The DI registrations and `addfieldprefix` in the XML reflect this. `services/provider.php` declares **no** namespace (matching Joomla core convention).
 
 ### Template
 
@@ -60,5 +60,5 @@ When editing, do not "fix" these by wiring them up; they are the upsell boundary
 ## Conventions / gotchas
 
 - `@since` tags are inconsistent (mix of `1.0.0` and `2.0.0`); the real release version is the `<version>` in `mod_contentcalendar.xml` (currently `1.0.0`). Bump that for releases.
-- DB query state filter is hardcoded to published + archived (`a.state IN (1, 2)`) and includes future-dated articles by design.
+- DB query state filter is hardcoded to published + archived (`whereIn('a.state', [1, 2])`) and includes future-dated articles by design.
 - Languages: full set under `language/<tag>/` (de, en-GB, es, fr, it, nl) — add new strings to **all** of them, especially `en-GB`.
