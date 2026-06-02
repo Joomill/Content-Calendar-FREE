@@ -34,7 +34,10 @@ echo $moduleclass_sfx; ?>">
     <!-- Calendar Navigation -->
     <div class="calendar-navigation">
         <a href="<?php
-        echo $base_url . $separator . 'month=' . $calendar_data['prev_month'] . '&year=' . $calendar_data['prev_year']; ?>"
+        echo htmlspecialchars(
+            $base_url . $separator . 'month=' . (int) $calendar_data['prev_month'] . '&year=' . (int) $calendar_data['prev_year'],
+            ENT_QUOTES
+        ); ?>"
            class="btn btn-outline-secondary btn-sm prev-month">
             &laquo; <?php
             echo Text::_('MOD_CONTENTCALENDAR_PREVIOUS_MONTH'); ?>
@@ -82,7 +85,10 @@ echo $moduleclass_sfx; ?>">
         </h3>
 
         <a href="<?php
-        echo $base_url . $separator . 'month=' . $calendar_data['next_month'] . '&year=' . $calendar_data['next_year']; ?>"
+        echo htmlspecialchars(
+            $base_url . $separator . 'month=' . (int) $calendar_data['next_month'] . '&year=' . (int) $calendar_data['next_year'],
+            ENT_QUOTES
+        ); ?>"
            class="btn btn-outline-secondary btn-sm next-month">
             <?php
             echo Text::_('MOD_CONTENTCALENDAR_NEXT_MONTH'); ?> &raquo;

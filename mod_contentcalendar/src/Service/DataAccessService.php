@@ -10,7 +10,7 @@ namespace Joomill\Module\Contentcalendar\Administrator\Service;
 
 use DateTime;
 use Exception;
-use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\User\User;
 use Joomla\Database\DatabaseInterface;
 
@@ -115,7 +115,7 @@ class DataAccessService
 		}
 		catch (Exception $e)
 		{
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			Log::add($e->getMessage(), Log::ERROR, 'mod_contentcalendar');
 
 			return [];
 		}
@@ -180,7 +180,7 @@ class DataAccessService
 		}
 		catch (Exception $e)
 		{
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			Log::add($e->getMessage(), Log::ERROR, 'mod_contentcalendar');
 
 			return [];
 		}
@@ -239,7 +239,7 @@ class DataAccessService
 		}
 		catch (Exception $e)
 		{
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			Log::add($e->getMessage(), Log::ERROR, 'mod_contentcalendar');
 
 			return false;
 		}

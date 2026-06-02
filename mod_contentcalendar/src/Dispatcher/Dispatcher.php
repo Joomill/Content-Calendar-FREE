@@ -63,8 +63,16 @@ class Dispatcher extends AbstractModuleDispatcher
 		$current_month = $validated['month'];
 		$current_year  = $validated['year'];
 
-		// Retrieve and organize the articles for the calendar grid
-		$articles        = $dataAccessService->getArticlesForMonth($categories, $current_month, $current_year);
+		// Retrieve the articles only for users allowed to manage content; the
+		// calendar exposes article titles, notes and authors.
+		$articles = [];
+		$user     = $app->getIdentity();
+
+		if ($user && $user->authorise('core.manage', 'com_content')) {
+			$articles = $dataAccessService->getArticlesForMonth($categories, $current_month, $current_year);
+		}
+
+		// Organize the articles for the calendar grid
 		$articles_by_day = $businessLogicService->organizeArticlesByDay($articles);
 		$calendar_data   = $businessLogicService->prepareCalendarData($current_month, $current_year, $articles_by_day);
 

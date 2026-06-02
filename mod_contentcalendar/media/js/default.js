@@ -8,7 +8,7 @@
 window.ContentCalendar = (function () {
     'use strict';
 
-    let debugMode = true; // Enable debug logging
+    let debugMode = false; // Set to true to enable debug logging
 
     /**
      * Debug logging function
