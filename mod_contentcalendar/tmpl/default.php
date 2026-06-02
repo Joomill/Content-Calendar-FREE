@@ -1,7 +1,7 @@
 <?php
 /*
- *  package: Content Calendar FREE
- *  copyright: Copyright (c) 2025. Jeroen Moolenschot | Joomill
+ *  package: Joomill Content Calendar FREE
+ *  copyright: Copyright (c) 2026. Jeroen Moolenschot | Joomill
  *  license: GNU General Public License version 3 or later
  *  link: https://www.joomill-extensions.com
  */
