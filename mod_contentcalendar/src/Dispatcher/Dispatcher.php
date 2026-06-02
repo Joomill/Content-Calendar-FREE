@@ -46,6 +46,11 @@ class Dispatcher extends AbstractModuleDispatcher
 		$app    = $data['app'];
 		$input  = $app->getInput();
 
+		// Register the module assets
+		$wa = $app->getDocument()->getWebAssetManager();
+		$wa->registerAndUseStyle('mod_contentcalendar.style', 'mod_contentcalendar/default.css');
+		$wa->registerAndUseScript('mod_contentcalendar.script', 'mod_contentcalendar/default.js');
+
 		// Instantiate the module services. The database comes from the DI container.
 		$dataAccessService    = new DataAccessService(Factory::getContainer()->get(DatabaseInterface::class));
 		$businessLogicService = new BusinessLogicService();
