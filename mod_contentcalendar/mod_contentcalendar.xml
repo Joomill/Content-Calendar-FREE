@@ -2,7 +2,7 @@
 <extension type="module" version="5.0" client="administrator" method="upgrade">
     <name>MOD_CONTENTCALENDAR</name>
     <description>MOD_CONTENTCALENDAR_XML_DESCRIPTION</description>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <creationDate>June 2026</creationDate>
     <copyright>2026 Joomill Extensions</copyright>
     <license>GNU General Public License version 3 or later;</license>
