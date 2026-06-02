@@ -84,7 +84,32 @@ class Dispatcher extends AbstractModuleDispatcher
 		$data['moduleclass_sfx'] = $moduleclass_sfx;
 		$data['calendar_data']   = $calendar_data;
 		$data['params']          = $params;
+		$data['today']           = $this->getLocalToday($app, $user);
 
 		return $data;
+	}
+
+	/**
+	 * Resolve "today" as a Y-m-d string in the viewing user's timezone
+	 *
+	 * @param   object  $app   The application instance
+	 * @param   mixed   $user  The current identity (or null)
+	 *
+	 * @return  string  Today's date (Y-m-d) in the display timezone
+	 *
+	 * @since   1.0.1
+	 */
+	private function getLocalToday($app, $user): string
+	{
+		$tz = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
+
+		try
+		{
+			return Factory::getDate('now')->setTimezone(new \DateTimeZone($tz))->format('Y-m-d');
+		}
+		catch (\Exception $e)
+		{
+			return Factory::getDate('now')->format('Y-m-d');
+		}
 	}
 }

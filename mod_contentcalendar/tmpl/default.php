@@ -120,7 +120,7 @@ echo $moduleclass_sfx; ?>">
             $day            = 1;
             $days_in_month  = $calendar_data['days_in_month'];
             $first_day      = $calendar_data['first_day_of_week'];
-            $current_date   = date('Y-m-d');
+            $current_date   = $today ?? date('Y-m-d');
             $calendar_month = sprintf('%04d-%02d', $calendar_data['current_year'], $calendar_data['current_month']);
 
             // Calculate weeks needed
@@ -137,7 +137,8 @@ echo $moduleclass_sfx; ?>">
                         {
                             echo ' empty-day';
                         }
-                        if ($cell_day == date('j') && $calendar_month == date('Y-m'))
+                        if ($cell_day >= 1 && $cell_day <= $days_in_month
+                            && sprintf('%04d-%02d-%02d', $calendar_data['current_year'], $calendar_data['current_month'], $cell_day) === $current_date)
                         {
                             echo ' today';
                         }
@@ -169,7 +170,7 @@ echo $moduleclass_sfx; ?>">
                                             $edit_url = Route::_(
                                                     'index.php?option=com_content&task=article.edit&id=' . $article->id . '&return=' . $return_param
                                             );
-                                            $is_future = strtotime($article->publish_up) > time();
+                                            $is_future = !empty($article->is_future);
                                             $publish_time = date('H:i', strtotime($article->publish_up));
                                             $publish_date = date('Y-m-d', strtotime($article->publish_up));
                                             $author_name = !empty($article->author_name) ? $article->author_name : Text::_(

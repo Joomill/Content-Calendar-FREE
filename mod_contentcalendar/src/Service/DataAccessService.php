@@ -9,7 +9,9 @@
 namespace Joomill\Module\Contentcalendar\Administrator\Service;
 
 use DateTime;
+use DateTimeZone;
 use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\User\User;
 use Joomla\Database\DatabaseInterface;
@@ -146,6 +148,8 @@ class DataAccessService
 			$db->setQuery($query);
 			$articles = $db->loadObjectList() ?: [];
 
+			$this->localizeDates($articles);
+
 			return $this->attachTags($articles);
 		}
 		catch (Exception $e)
@@ -226,6 +230,61 @@ class DataAccessService
 		}
 
 		return $articles;
+	}
+
+	/**
+	 * Convert each article's UTC publish_up into the display timezone
+	 *
+	 * Joomla stores publish_up in UTC. Without conversion the articles would be
+	 * bucketed on the wrong calendar day and shown with the wrong time for users
+	 * whose timezone differs from the server. The original UTC value is used to
+	 * compute a reliable is_future flag, after which publish_up is replaced by
+	 * the local wall-clock value the templates and grouping render.
+	 *
+	 * @param   array  $articles  Article objects (modified in place)
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0.1
+	 */
+	private function localizeDates(array $articles): void
+	{
+		if (empty($articles))
+		{
+			return;
+		}
+
+		$app  = Factory::getApplication();
+		$user = $app->getIdentity();
+		$tz   = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
+
+		try
+		{
+			$zone = new DateTimeZone($tz);
+		}
+		catch (Exception $e)
+		{
+			$zone = new DateTimeZone('UTC');
+		}
+
+		$now = Factory::getDate('now');
+
+		foreach ($articles as $article)
+		{
+			if (empty($article->publish_up))
+			{
+				$article->is_future = false;
+
+				continue;
+			}
+
+			// publish_up is stored in UTC; compare the real instant for is_future.
+			$date               = Factory::getDate($article->publish_up);
+			$article->is_future = $date > $now;
+
+			// Replace publish_up with the local wall-clock value for display/grouping.
+			$article->publish_up = $date->setTimezone($zone)->format('Y-m-d H:i:s');
+		}
 	}
 
 	/**
