@@ -7,15 +7,9 @@
  *  link: https://www.joomill-extensions.com
  */
 
-namespace services;
-
-use Joomill\Module\Contentcalendar\Administrator\Service\BusinessLogicService;
-use Joomill\Module\Contentcalendar\Administrator\Service\DataAccessService;
 use Joomla\CMS\Extension\Service\Provider\HelperFactory;
-use Joomla\CMS\Extension\Service\Provider\HelperFactoryInterface;
+use Joomla\CMS\Extension\Service\Provider\Module;
 use Joomla\CMS\Extension\Service\Provider\ModuleDispatcherFactory;
-use Joomla\CMS\Extension\Service\Provider\ModuleDispatcherFactoryInterface;
-use Joomla\CMS\Factory;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 
@@ -24,42 +18,27 @@ use Joomla\DI\ServiceProviderInterface;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Anonymous service provider class for Content Calendar Module
+ * Service provider for the Content Calendar module.
  *
- * Implements ServiceProviderInterface to register module-specific services
- * with Joomla's dependency injection container. This pattern allows for
- * clean separation of concerns and proper dependency management.
+ * Registers the module dispatcher factory and helper factory with Joomla's
+ * dependency injection container, following the core module pattern.
  *
- * @since  2.0.0
+ * @since  1.0.0
  */
 return new class () implements ServiceProviderInterface {
 	/**
-	 * Register module services with the dependency injection container
+	 * Registers the service provider with a DI container.
 	 *
-	 * Registers both the ModuleDispatcherFactory and HelperFactory services
-	 * with their respective namespace configurations. This enables the modern
-	 * Joomla dispatcher pattern with proper dependency injection.
-	 *
-	 * @param   Container  $container  The DI container instance to register services with
+	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0
+	 * @since   1.0.0
 	 */
 	public function register(Container $container)
 	{
 		$container->registerServiceProvider(new ModuleDispatcherFactory('\\Joomill\\Module\\Contentcalendar'));
-		$container->registerServiceProvider(
-			new HelperFactory('\\Joomill\\Module\\Contentcalendar\\Administrator\\Helper')
-		);
-
-		// Register dedicated service classes
-		$container->set(DataAccessService::class, function (Container $container) {
-			return new DataAccessService(Factory::getDbo());
-		});
-
-		$container->set(BusinessLogicService::class, function (Container $container) {
-			return new BusinessLogicService();
-		});
+		$container->registerServiceProvider(new HelperFactory('\\Joomill\\Module\\Contentcalendar\\Administrator\\Helper'));
+		$container->registerServiceProvider(new Module());
 	}
 };

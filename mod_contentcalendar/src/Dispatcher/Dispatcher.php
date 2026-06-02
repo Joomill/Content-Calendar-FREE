@@ -12,116 +12,66 @@ use Joomill\Module\Contentcalendar\Administrator\Service\BusinessLogicService;
 use Joomill\Module\Contentcalendar\Administrator\Service\DataAccessService;
 use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Helper\HelperFactoryAwareInterface;
-use Joomla\CMS\Helper\HelperFactoryAwareTrait;
+use Joomla\Database\DatabaseInterface;
 
 defined('_JEXEC') or die;
 
 /**
- * Modern dispatcher class for Content Calendar Module
+ * Dispatcher class for Content Calendar Module
  *
- * Implements the modern Joomla 4/5 module dispatcher pattern with dependency injection.
- * Handles module initialization, asset loading, parameter processing, and data preparation
- * for the calendar template. Uses helper factory pattern for clean separation of concerns.
+ * Implements the Joomla 4/5/6 module dispatcher pattern. The module dispatcher
+ * factory instantiates this class with the standard ($module, $app, $input)
+ * signature, so dependencies are resolved inside getLayoutData() rather than
+ * through the constructor.
  *
  * @since  1.0.0
  */
-class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareInterface
+class Dispatcher extends AbstractModuleDispatcher
 {
-	use HelperFactoryAwareTrait;
-
-	/**
-	 * Data access service
-	 *
-	 * @var    DataAccessService
-	 * @since  1.0.0
-	 */
-	private $dataAccessService;
-
-	/**
-	 * Business logic service
-	 *
-	 * @var    BusinessLogicService
-	 * @since  1.0.0
-	 */
-	private $businessLogicService;
-
-
-	/**
-	 * Constructor
-	 *
-	 * @param   DataAccessService     $dataAccessService     Data access service
-	 * @param   BusinessLogicService  $businessLogicService  Business logic service
-	 *
-	 * @since   1.0.0
-	 */
-	public function __construct(DataAccessService $dataAccessService, BusinessLogicService $businessLogicService)
-	{
-		$this->dataAccessService    = $dataAccessService;
-		$this->businessLogicService = $businessLogicService;
-	}
-
 	/**
 	 * Prepare and return layout data for the calendar template
 	 *
-	 * Orchestrates the entire data preparation process for the calendar module.
-	 * Loads required CSS/JS assets, processes module parameters, validates date inputs,
-	 * retrieves articles from the database, and organizes all data for template rendering.
-	 * Integrates with the helper factory pattern for clean dependency management.
+	 * Reads the module parameters and the requested month/year, retrieves the
+	 * matching articles and organizes them into the calendar grid data consumed
+	 * by the template.
 	 *
-	 * @return  array  Associative array containing moduleclass_sfx, calendar_data, and params
+	 * @return  array  Layout data containing moduleclass_sfx, calendar_data and params
 	 *
-	 * @throws  Exception  When helper factory operations or database queries fail
 	 * @since   1.0.0
-	 *
 	 */
 	protected function getLayoutData()
 	{
-		$data = parent::getLayoutData();
+		$data   = parent::getLayoutData();
+		$params = $data['params'];
+		$app    = $data['app'];
+		$input  = $app->getInput();
 
-		// Get module parameters
-		$moduleclass_sfx = htmlspecialchars($this->getParams()->get('moduleclass_sfx', ''));
-		$categories      = $this->getParams()->get('categories', []);
+		// Instantiate the module services. The database comes from the DI container.
+		$dataAccessService    = new DataAccessService(Factory::getContainer()->get(DatabaseInterface::class));
+		$businessLogicService = new BusinessLogicService();
 
+		// Module parameters
+		$moduleclass_sfx = htmlspecialchars((string) $params->get('moduleclass_sfx', ''));
+		$categories      = $params->get('categories', []);
 
-		// Get current month and year from request or use current date
-		$app           = Factory::getApplication();
-		$input         = $app->getInput();
-		$current_month = $input->getInt('month', date('n'));
-		$current_year  = $input->getInt('year', date('Y'));
+		// Requested month/year, falling back to the current date
+		$current_month = $input->getInt('month', (int) date('n'));
+		$current_year  = $input->getInt('year', (int) date('Y'));
 
+		// Validate to keep date calculations within safe ranges
+		$validated     = $businessLogicService->validateMonthYear($current_month, $current_year);
+		$current_month = $validated['month'];
+		$current_year  = $validated['year'];
 
-        // Default monthly view
-        // Validate month and year
-        $validated     = $this->businessLogicService->validateMonthYear($current_month, $current_year);
-        $current_month = $validated['month'];
-        $current_year  = $validated['year'];
+		// Retrieve and organize the articles for the calendar grid
+		$articles        = $dataAccessService->getArticlesForMonth($categories, $current_month, $current_year);
+		$articles_by_day = $businessLogicService->organizeArticlesByDay($articles);
+		$calendar_data   = $businessLogicService->prepareCalendarData($current_month, $current_year, $articles_by_day);
 
-        // Calculate navigation using business logic service
-        $navigation = $this->businessLogicService->calculateNavigation($current_month, $current_year);
-        $prev_month = $navigation['prev_month'];
-        $prev_year  = $navigation['prev_year'];
-        $next_month = $navigation['next_month'];
-        $next_year  = $navigation['next_year'];
+		$data['moduleclass_sfx'] = $moduleclass_sfx;
+		$data['calendar_data']   = $calendar_data;
+		$data['params']          = $params;
 
-        // Get articles for the current month using data access service
-        $articles = $this->dataAccessService->getArticlesForMonth($categories, $current_month, $current_year);
-
-        // Organize articles by day using business logic service
-        $articles_by_day = $this->businessLogicService->organizeArticlesByDay($articles);
-
-        // Prepare calendar data using business logic service
-        $calendar_data = $this->businessLogicService->prepareCalendarData(
-            $current_month,
-            $current_year,
-            $articles_by_day
-        );
-
-        $data['moduleclass_sfx'] = $moduleclass_sfx;
-        $data['calendar_data']   = $calendar_data;
-        $data['params']          = $this->getParams();
-
-        return $data;
+		return $data;
 	}
-
 }

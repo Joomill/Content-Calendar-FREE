@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
 
 class Mod_ContentcalendarInstallerScript
 {
@@ -24,7 +25,7 @@ class Mod_ContentcalendarInstallerScript
 	private function enableModule()
 	{
 		// Check if Module has not been published yet
-		$db    = Factory::getContainer()->get('DatabaseDriver');
+		$db    = Factory::getContainer()->get(DatabaseInterface::class);
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName('id'));
 		$query->from($db->quoteName('#__modules'));
