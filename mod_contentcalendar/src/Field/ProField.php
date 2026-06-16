@@ -21,8 +21,9 @@ class ProField extends FormField
 	protected function getInput()
 	{
 		$text = Text::_('MOD_CONTENTCALENDAR_PRO_ONLY');
+		$url  = 'https://www.joomill-extensions.com/extensions/content-planner-calendar-module';
 
-		return
-			'<code>' . $text . '</code>';
+		return '<a class="badge bg-success text-decoration-none" href="' . $url . '" target="_blank" rel="noopener">'
+			. $text . '</a>';
 	}
 }

@@ -21,9 +21,9 @@ class UpgradeField extends FormField
 	protected function getInput()
 	{
 		$text = Text::_('MOD_CONTENTCALENDAR_FREE_VERSION');
+		$url  = 'https://www.joomill-extensions.com/extensions/content-planner-calendar-module';
 
-		return
-			'<div class="alert alert-warning text-center small">' . $text . '<br/>
-			 <a class="btn btn-success btn-sm text-white mt-3" target="_blank" href="https://www.joomill-extensions.com/extensions/content-planner-calendar-module">Content Calender PRO</a></div>';
+		return '<div class="alert alert-success">' . $text
+			. ' <a class="alert-link" href="' . $url . '" target="_blank" rel="noopener">Content Calendar PRO</a></div>';
 	}
 }
