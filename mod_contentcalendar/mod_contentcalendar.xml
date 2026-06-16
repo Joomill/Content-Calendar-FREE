@@ -2,16 +2,16 @@
 <extension type="module" version="5.0" client="administrator" method="upgrade">
     <name>MOD_CONTENTCALENDAR</name>
     <description>MOD_CONTENTCALENDAR_XML_DESCRIPTION</description>
-    <version>1.1.0</version>
-    <creationDate>June 2026</creationDate>
-    <copyright>2026 Joomill Extensions</copyright>
-    <license>GNU General Public License version 3 or later;</license>
     <author>Jeroen Moolenschot | Joomill</author>
     <authorEmail>info@joomill-extensions.com</authorEmail>
     <authorUrl>https://www.joomill-extensions.com</authorUrl>
+    <license>GNU General Public License version 3 or later</license>
+    <creationDate>June 2026</creationDate>
+    <copyright>(C) 2026 Joomill Extensions</copyright>
+    <version>1.1.0</version>
     <namespace path="src">Joomill\Module\Contentcalendar</namespace>
 
-    <!-- Script -->
+    <!-- Scripts to run on installation -->
     <scriptfile>script.php</scriptfile>
 
     <!-- Files -->
@@ -117,6 +117,9 @@
             </fieldset>
         </fields>
     </config>
+
+    <!-- Help button URL -->
+    <help key="" url="MOD_CONTENTCALENDAR_HELP_URL" />
 
     <!-- Changelog -->
     <changelogurl>
