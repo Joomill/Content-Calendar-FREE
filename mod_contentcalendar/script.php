@@ -245,7 +245,7 @@ class mod_contentcalendarInstallerScript implements InstallerScriptInterface
         echo '<h3>' . Text::_('MOD_CONTENTCALENDAR_INSTALL_QUICKSTART') . ':</h3>';
         echo '<ul>';
         echo '<li><a style="text-decoration: underline;" href="index.php?option=com_modules&view=modules&client_id=1" target="_blank">' . Text::_('MOD_CONTENTCALENDAR_INSTALL_CONFIGURATION') . '</a></li>';
-        echo '<li><a style="text-decoration: underline;" href="https://www.joomill-extensions.com/documentation/content-calendar" target="_blank">' . Text::_('MOD_CONTENTCALENDAR_INSTALL_NEEDHELP') . '</a></li>';
+        echo '<li><a style="text-decoration: underline;" href="https://www.joomill-extensions.com/documentation/content-calendar-module" target="_blank">' . Text::_('MOD_CONTENTCALENDAR_INSTALL_NEEDHELP') . '</a></li>';
         echo '</ul>';
         echo '<hr>';
         echo '<div class="text-center">' . Text::_('MOD_CONTENTCALENDAR_INSTALL_FOLLOWME') . ':</div>';
