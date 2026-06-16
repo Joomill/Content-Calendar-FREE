@@ -12,5 +12,3 @@ All notable changes to the Extension are documented in this file.
 - Update: modernized the "pro" upsell form field to a namespaced ProField that renders a PRO badge linking to the upgrade page (replaces the legacy elements/pro.php).
 
 ## TODO
-- Check other updates in the past: https://github.com/joomla/Manual/tree/main/updates
-- Check bc for Joomla 7 release: https://github.com/joomla/Manual/blob/main/updates/64-70/removed-backward-incompatibility.md
