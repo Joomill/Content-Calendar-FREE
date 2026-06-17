@@ -26,6 +26,12 @@ $separator = (strpos($base_url, '?') !== false) ? '&' : '?';
 
 // Build return parameter to come back to this dashboard URL after editing
 $return_param = base64_encode(Uri::getInstance()->toString());
+
+$wa = $app->getDocument()->getWebAssetManager();
+
+if ($params->get('custom_css')) {
+    $wa->addInlineStyle($params->get('custom_css'));
+}
 ?>
 
 <div class="mod-contentcalendar default-view <?php

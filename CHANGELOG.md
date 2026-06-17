@@ -3,6 +3,7 @@
 All notable changes to the Extension are documented in this file.
 
 ## 1.1.0 [UNRELEASED]
+- Addition: Custom CSS field in the advanced options to add inline styling, output through the WebAssetManager
 - Update: rebuilt the module install script (script.php) to the Joomla 4.2+ InstallerScriptInterface with a return statement, typed install/update/uninstall/preflight/postflight methods and minimum PHP/Joomla version checks.
 - Update: moved the administrator dashboard auto-publish from install() to postflight('install') and wrapped the installer logic in try/catch logging.
 - Addition: install and uninstall now show a localized thank-you/quickstart screen with Joomill social links; added the matching language strings (THANKYOU/QUICKSTART/CONFIGURATION/NEEDHELP) to all six languages.

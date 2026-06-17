@@ -113,6 +113,16 @@
                         label="Header Icon"
                         default="fa-solid fa-calendar"
                 />
+                <field
+                        type="editor"
+                        name="custom_css"
+                        label="MOD_CONTENTCALENDAR_CUSTOM_CSS_LABEL"
+                        default=""
+                        rows="10"
+                        buttons="no"
+                        editor="codemirror|none"
+                        filter="raw"
+                />
 
             </fieldset>
         </fields>
