@@ -2,7 +2,10 @@
 
 All notable changes to the Extension are documented in this file.
 
-## 1.1.0 [UNRELEASED]
+## 1.1.1 - 08/07/2026
+- Addition: Downloads from the Joomill update server now include diagnostic request headers with site and environment information
+
+## 1.1.0 - 02/07/2026
 - Addition: Custom CSS field in the advanced options to add inline styling, output through the WebAssetManager
 - Update: rebuilt the module install script (script.php) to the Joomla 4.2+ InstallerScriptInterface with a return statement, typed install/update/uninstall/preflight/postflight methods and minimum PHP/Joomla version checks.
 - Update: moved the administrator dashboard auto-publish from install() to postflight('install') and wrapped the installer logic in try/catch logging.
