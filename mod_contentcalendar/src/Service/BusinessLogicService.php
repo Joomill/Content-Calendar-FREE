@@ -24,14 +24,25 @@ defined('_JEXEC') or die;
 class BusinessLogicService
 {
 	/**
+	 * Number of years before and after the current year that can be requested
+	 *
+	 * Keeps the set of valid month URLs small so the calendar navigation cannot
+	 * be walked through decades of empty months.
+	 *
+	 * @var    integer
+	 * @since  1.1.2
+	 */
+	private const YEAR_WINDOW = 3;
+
+	/**
 	 * Validate and sanitize month and year parameters
 	 *
 	 * Ensures month and year values are within acceptable ranges. Falls back to
-	 * current date values if parameters are invalid. Month must be 1-12, year
-	 * must be between 1970-2100 to prevent potential issues with date calculations.
+	 * current date values if parameters are invalid. The year is limited to a
+	 * window of YEAR_WINDOW years around the current year.
 	 *
 	 * @param   int  $month  Month number to validate (expected range: 1-12)
-	 * @param   int  $year   Year to validate (expected range: 1970-2100)
+	 * @param   int  $year   Year to validate
 	 *
 	 * @return  array  Associative array with validated 'month' and 'year' keys
 	 *
@@ -39,14 +50,16 @@ class BusinessLogicService
 	 */
 	public function validateMonthYear($month, $year)
 	{
+		$currentYear = (int) date('Y');
+
 		// Ensure valid month/year
 		if ($month < 1 || $month > 12)
 		{
 			$month = date('n');
 		}
-		if ($year < 1970 || $year > 2100)
+		if ($year < $currentYear - self::YEAR_WINDOW || $year > $currentYear + self::YEAR_WINDOW)
 		{
-			$year = date('Y');
+			$year = $currentYear;
 		}
 
 		return [

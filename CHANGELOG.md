@@ -2,6 +2,9 @@
 
 All notable changes to the Extension are documented in this file.
 
+## 1.1.2 [UNRELEASED]
+- Update: the requested calendar year is now limited to a window of 3 years around the current year (was 1970-2100), so the month navigation cannot be walked through decades of empty months
+
 ## 1.1.1 - 08/07/2026
 - Addition: Downloads from the Joomill update server now include diagnostic request headers with site and environment information
 
