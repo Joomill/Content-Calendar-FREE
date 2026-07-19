@@ -2,6 +2,9 @@
 
 All notable changes to the Extension are documented in this file.
 
+## 1.1.2 - Unreleased
+- Improvement: PHP file headers updated to the standard Joomla docblock copyright format; code style only, no functional changes
+
 ## 1.1.2 [UNRELEASED]
 - Update: the requested calendar year is now limited to a window of 3 years around the current year (was 1970-2100), so the month navigation cannot be walked through decades of empty months
 

@@ -1,9 +1,11 @@
 <?php
-/*
- *  package: Joomill Content Calendar FREE
- *  copyright: Copyright (c) 2026. Jeroen Moolenschot | Joomill
- *  license: GNU General Public License version 3 or later
- *  link: https://www.joomill-extensions.com
+
+/**
+ * Content Calendar
+ *
+ * @copyright   Copyright (c) 2026 Jeroen Moolenschot | Joomill
+ * @license     GNU General Public License version 3 or later; see LICENSE
+ * @link        https://www.joomill-extensions.com
  */
 
 // No direct access.
