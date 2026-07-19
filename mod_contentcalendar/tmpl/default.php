@@ -69,22 +69,18 @@ echo $moduleclass_sfx; ?>">
             ];
             $cm             = (int) ($calendar_data['current_month'] ?? 0);
             $localizedMonth = '';
-            if ($cm >= 1 && $cm <= 12)
-            {
+            if ($cm >= 1 && $cm <= 12) {
                 $key        = $monthKeys[$cm];
                 $translated = Text::_($key);
                 // If translation missing, Text::_ returns the key itself; fallback to original month_name or PHP date
-                if ($translated === $key)
-                {
+                if ($translated === $key) {
                     $translated = $calendar_data['month_name'] ?? date(
-                            'M',
-                            mktime(0, 0, 0, $cm, 1, (int) ($calendar_data['current_year'] ?? date('Y')))
+                        'M',
+                        mktime(0, 0, 0, $cm, 1, (int) ($calendar_data['current_year'] ?? date('Y')))
                     );
                 }
                 $localizedMonth = $translated;
-            }
-            else
-            {
+            } else {
                 $localizedMonth = (string) ($calendar_data['month_name'] ?? '');
             }
             echo htmlspecialchars($localizedMonth) . ' ' . (int) $calendar_data['current_year'];
@@ -134,143 +130,130 @@ echo $moduleclass_sfx; ?>">
             // Calculate weeks needed
             $weeks_needed = ceil(($days_in_month + $first_day) / 7);
 
-            for ($week = 0; $week < $weeks_needed; $week++): ?>
+            for ($week = 0; $week < $weeks_needed; $week++) : ?>
                 <tr>
                     <?php
-                    for ($day_of_week = 0; $day_of_week < 7; $day_of_week++):
+                    for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) :
                         $cell_day = ($week * 7) + $day_of_week - $first_day + 1;
                         ?>
                         <td class="calendar-day<?php
-                        if ($cell_day < 1 || $cell_day > $days_in_month)
-                        {
+                        if ($cell_day < 1 || $cell_day > $days_in_month) {
                             echo ' empty-day';
                         }
-                        if ($cell_day >= 1 && $cell_day <= $days_in_month
-                            && sprintf('%04d-%02d-%02d', $calendar_data['current_year'], $calendar_data['current_month'], $cell_day) === $current_date)
-                        {
+                        if ($cell_day >= 1 && $cell_day <= $days_in_month && sprintf('%04d-%02d-%02d', $calendar_data['current_year'], $calendar_data['current_month'], $cell_day) === $current_date) {
                             echo ' today';
                         }
-                        if (isset($calendar_data['articles_by_day'][$cell_day]))
-                        {
+                        if (isset($calendar_data['articles_by_day'][$cell_day])) {
                             echo ' has-articles';
                         }
                         ?>"
                             data-day="<?php
                             echo $cell_day; ?>"
                             data-date="<?php
-                            echo sprintf(
-                                    '%04d-%02d-%02d',
-                                    $calendar_data['current_year'],
-                                    $calendar_data['current_month'],
-                                    $cell_day
-                            ); ?>">
+                            echo sprintf('%04d-%02d-%02d', $calendar_data['current_year'], $calendar_data['current_month'], $cell_day); ?>">
 
                             <?php
-                            if ($cell_day >= 1 && $cell_day <= $days_in_month): ?>
+                            if ($cell_day >= 1 && $cell_day <= $days_in_month) : ?>
                                 <div class="day-number"><?php
                                     echo $cell_day; ?>
                                 </div>
                                 <?php
-                                if (isset($calendar_data['articles_by_day'][$cell_day])): ?>
+                                if (isset($calendar_data['articles_by_day'][$cell_day])) : ?>
                                     <div class="articles-list">
                                         <?php
-                                        foreach ($calendar_data['articles_by_day'][$cell_day] as $article):
+                                        foreach ($calendar_data['articles_by_day'][$cell_day] as $article) :
                                             $edit_url = Route::_(
-                                                    'index.php?option=com_content&task=article.edit&id=' . $article->id . '&return=' . $return_param
+                                                'index.php?option=com_content&task=article.edit&id=' . $article->id . '&return=' . $return_param
                                             );
                                             $is_future = !empty($article->is_future);
                                             $publish_time = date('H:i', strtotime($article->publish_up));
                                             $publish_date = date('Y-m-d', strtotime($article->publish_up));
                                             $author_name = !empty($article->author_name) ? $article->author_name : Text::_(
-                                                    'MOD_CONTENTCALENDAR_UNKNOWN_AUTHOR'
+                                                'MOD_CONTENTCALENDAR_UNKNOWN_AUTHOR'
                                             );
                                             $item_color = ContentCalendarHelper::getItemColorSimple($article);
 
                                             // Build detailed tooltip text (multiline)
                                             $tooltip_parts   = [];
                                             $tooltip_parts[] = Text::_(
-                                                            'MOD_CONTENTCALENDAR_TOOLTIP_TITLE'
-                                                    ) . ': ' . (string) $article->title;
+                                                'MOD_CONTENTCALENDAR_TOOLTIP_TITLE'
+                                            ) . ': ' . (string) $article->title;
                                             $tooltip_parts[] = Text::_(
-                                                            'MOD_CONTENTCALENDAR_TOOLTIP_DATE'
-                                                    ) . ': ' . $publish_date;
+                                                'MOD_CONTENTCALENDAR_TOOLTIP_DATE'
+                                            ) . ': ' . $publish_date;
                                             $tooltip_parts[] = Text::_(
-                                                            'MOD_CONTENTCALENDAR_TOOLTIP_TIME'
-                                                    ) . ': ' . $publish_time;
+                                                'MOD_CONTENTCALENDAR_TOOLTIP_TIME'
+                                            ) . ': ' . $publish_time;
                                             $tooltip_parts[] = Text::_(
-                                                            'MOD_CONTENTCALENDAR_TOOLTIP_AUTHOR'
-                                                    ) . ': ' . $author_name;
-                                            if (!empty($article->category_title))
-                                            {
+                                                'MOD_CONTENTCALENDAR_TOOLTIP_AUTHOR'
+                                            ) . ': ' . $author_name;
+                                            if (!empty($article->category_title)) {
                                                 $tooltip_parts[] = Text::_(
-                                                                'MOD_CONTENTCALENDAR_TOOLTIP_CATEGORY'
-                                                        ) . ': ' . $article->category_title;
+                                                    'MOD_CONTENTCALENDAR_TOOLTIP_CATEGORY'
+                                                ) . ': ' . $article->category_title;
                                             }
-                                            if (!empty($article->tag_names))
-                                            {
+                                            if (!empty($article->tag_names)) {
                                                 $tooltip_parts[] = Text::_(
-                                                                'MOD_CONTENTCALENDAR_TOOLTIP_TAGS'
-                                                        ) . ': ' . $article->tag_names;
+                                                    'MOD_CONTENTCALENDAR_TOOLTIP_TAGS'
+                                                ) . ': ' . $article->tag_names;
                                             }
-                                            if (!empty($article->note))
-                                            {
+                                            if (!empty($article->note)) {
                                                 $tooltip_parts[] = Text::_(
-                                                                'MOD_CONTENTCALENDAR_TOOLTIP_NOTE'
-                                                        ) . ': ' . $article->note;
+                                                    'MOD_CONTENTCALENDAR_TOOLTIP_NOTE'
+                                                ) . ': ' . $article->note;
                                             }
                                             $tooltip_parts[] = Text::_(
-                                                            'MOD_CONTENTCALENDAR_TOOLTIP_ID'
-                                                    ) . ': ' . $article->id;
+                                                'MOD_CONTENTCALENDAR_TOOLTIP_ID'
+                                            ) . ': ' . $article->id;
                                             $status_text     = $is_future ? Text::_(
-                                                    'MOD_CONTENTCALENDAR_STATUS_FUTURE'
+                                                'MOD_CONTENTCALENDAR_STATUS_FUTURE'
                                             ) : Text::_('MOD_CONTENTCALENDAR_STATUS_PUBLISHED');
                                             $tooltip_parts[] = Text::_(
-                                                            'MOD_CONTENTCALENDAR_TOOLTIP_STATUS'
-                                                    ) . ': ' . $status_text;
+                                                'MOD_CONTENTCALENDAR_TOOLTIP_STATUS'
+                                            ) . ': ' . $status_text;
                                             $tooltip_text    = implode("\n", array_map('strval', $tooltip_parts));
                                             ?>
                                             <a class="article-bar<?php
-                                            echo $is_future ? ' future-article' : ' published-article'; ?><?php
-                                            ?>"
+                                            echo $is_future ? ' future-article' : ' published-article'; ?>"
                                                href="<?php
-                                               echo $edit_url; ?>"
+                                                echo $edit_url; ?>"
                                                style="background-color: <?php
-                                               echo htmlspecialchars($item_color); ?>;"
+                                                echo htmlspecialchars($item_color); ?>;"
                                                data-article-id="<?php
-                                               echo $article->id; ?>"
+                                                echo $article->id; ?>"
                                                data-is-future="<?php
-                                               echo $is_future ? '1' : '0'; ?>"
+                                                echo $is_future ? '1' : '0'; ?>"
                                                data-original-date="<?php
-                                               echo $publish_date; ?>"
+                                                echo $publish_date; ?>"
                                                data-title="<?php
-                                               echo htmlspecialchars($article->title); ?>"
+                                                echo htmlspecialchars($article->title); ?>"
                                                data-author="<?php
-                                               echo htmlspecialchars($author_name); ?>"
+                                                echo htmlspecialchars($author_name); ?>"
                                                data-category="<?php
-                                               echo htmlspecialchars($article->category_title ?? ''); ?>"
+                                                echo htmlspecialchars($article->category_title ?? ''); ?>"
                                                data-tags="<?php
-                                               echo htmlspecialchars($article->tag_names ?? ''); ?>"
+                                                echo htmlspecialchars($article->tag_names ?? ''); ?>"
                                                data-note="<?php
-                                               echo htmlspecialchars($article->note ?? ''); ?>"
+                                                echo htmlspecialchars($article->note ?? ''); ?>"
                                                data-time="<?php
-                                               echo $publish_time; ?>"
+                                                echo $publish_time; ?>"
                                                title="<?php
-                                               echo htmlspecialchars($tooltip_text, ENT_QUOTES); ?>">
+                                                echo htmlspecialchars($tooltip_text, ENT_QUOTES); ?>">
                                                 <?php
                                                 echo htmlspecialchars($article->title); ?>
                                             </a>
-                                        <?php
+                                            <?php
                                         endforeach; ?>
                                     </div>
-                                <?php
+                                    <?php
                                 endif; ?>
-                            <?php
+                                <?php
                             endif; ?>
                         </td>
-                    <?php
+                        <?php
                     endfor; ?>
                 </tr>
-            <?php
+                <?php
             endfor; ?>
             </tbody>
         </table>

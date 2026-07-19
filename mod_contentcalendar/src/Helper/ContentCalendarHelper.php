@@ -17,7 +17,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Helper class for Content Calendar Module
@@ -31,16 +33,14 @@ defined('_JEXEC') or die;
  */
 class ContentCalendarHelper
 {
-
-
-	/**
-	 * Simplified color getter: always uses category-based deterministic color without any params.
-	 *
-	 * @param object $article Article object containing catid
-	 * @return string Hex color code
-	 */
-	public static function getItemColorSimple($article): string
-	{
-		return '#1a73e8';
-	}
+    /**
+     * Simplified color getter: always uses category-based deterministic color without any params.
+     *
+     * @param object $article Article object containing catid
+     * @return string Hex color code
+     */
+    public static function getItemColorSimple($article): string
+    {
+        return '#1a73e8';
+    }
 }

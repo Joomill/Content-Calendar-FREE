@@ -9,7 +9,9 @@
  */
 
 // No direct access.
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Http\HttpFactory;
@@ -29,6 +31,7 @@ use Joomla\Database\DatabaseInterface;
  *
  * @since  1.0.0
  */
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace, Squiz.Classes.ValidClassName.NotCamelCaps -- Joomla installer script: global class with the manifest-mandated name
 class mod_contentcalendarInstallerScript implements InstallerScriptInterface
 {
     /**
@@ -433,7 +436,7 @@ class mod_contentcalendarInstallerScript implements InstallerScriptInterface
             Log::add('Content Calendar: could not install the Joomill Update Logging plugin: ' . $e->getMessage(), Log::WARNING, 'mod_contentcalendar');
         }
     }
-
 }
 
+// phpcs:disable PSR1.Files.SideEffects -- the returned instance is required for the InstallerScriptInterface path
 return new mod_contentcalendarInstallerScript();

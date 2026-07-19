@@ -27,19 +27,19 @@ use Joomla\DI\ServiceProviderInterface;
  * @since  1.0.0
  */
 return new class () implements ServiceProviderInterface {
-	/**
-	 * Registers the service provider with a DI container.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0.0
-	 */
-	public function register(Container $container)
-	{
-		$container->registerServiceProvider(new ModuleDispatcherFactory('\\Joomill\\Module\\Contentcalendar'));
-		$container->registerServiceProvider(new HelperFactory('\\Joomill\\Module\\Contentcalendar\\Administrator\\Helper'));
-		$container->registerServiceProvider(new Module());
-	}
+    /**
+     * Registers the service provider with a DI container.
+     *
+     * @param   Container  $container  The DI container.
+     *
+     * @return  void
+     *
+     * @since   1.0.0
+     */
+    public function register(Container $container)
+    {
+        $container->registerServiceProvider(new ModuleDispatcherFactory('\\Joomill\\Module\\Contentcalendar'));
+        $container->registerServiceProvider(new HelperFactory('\\Joomill\\Module\\Contentcalendar\\Administrator\\Helper'));
+        $container->registerServiceProvider(new Module());
+    }
 };

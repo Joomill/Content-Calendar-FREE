@@ -16,7 +16,9 @@ use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseInterface;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Dispatcher class for Content Calendar Module
@@ -30,88 +32,85 @@ defined('_JEXEC') or die;
  */
 class Dispatcher extends AbstractModuleDispatcher
 {
-	/**
-	 * Prepare and return layout data for the calendar template
-	 *
-	 * Reads the module parameters and the requested month/year, retrieves the
-	 * matching articles and organizes them into the calendar grid data consumed
-	 * by the template.
-	 *
-	 * @return  array  Layout data containing moduleclass_sfx, calendar_data and params
-	 *
-	 * @since   1.0.0
-	 */
-	protected function getLayoutData()
-	{
-		$data   = parent::getLayoutData();
-		$params = $data['params'];
-		$app    = $data['app'];
-		$input  = $app->getInput();
+    /**
+     * Prepare and return layout data for the calendar template
+     *
+     * Reads the module parameters and the requested month/year, retrieves the
+     * matching articles and organizes them into the calendar grid data consumed
+     * by the template.
+     *
+     * @return  array  Layout data containing moduleclass_sfx, calendar_data and params
+     *
+     * @since   1.0.0
+     */
+    protected function getLayoutData()
+    {
+        $data   = parent::getLayoutData();
+        $params = $data['params'];
+        $app    = $data['app'];
+        $input  = $app->getInput();
 
-		// Register the module assets
-		$wa = $app->getDocument()->getWebAssetManager();
-		$wa->registerAndUseStyle('mod_contentcalendar.style', 'mod_contentcalendar/default.css');
-		$wa->registerAndUseScript('mod_contentcalendar.script', 'mod_contentcalendar/default.js');
+        // Register the module assets
+        $wa = $app->getDocument()->getWebAssetManager();
+        $wa->registerAndUseStyle('mod_contentcalendar.style', 'mod_contentcalendar/default.css');
+        $wa->registerAndUseScript('mod_contentcalendar.script', 'mod_contentcalendar/default.js');
 
-		// Instantiate the module services. The database comes from the DI container.
-		$dataAccessService    = new DataAccessService(Factory::getContainer()->get(DatabaseInterface::class));
-		$businessLogicService = new BusinessLogicService();
+        // Instantiate the module services. The database comes from the DI container.
+        $dataAccessService    = new DataAccessService(Factory::getContainer()->get(DatabaseInterface::class));
+        $businessLogicService = new BusinessLogicService();
 
-		// Module parameters
-		$moduleclass_sfx = htmlspecialchars((string) $params->get('moduleclass_sfx', ''));
-		$categories      = $params->get('categories', []);
+        // Module parameters
+        $moduleclass_sfx = htmlspecialchars((string) $params->get('moduleclass_sfx', ''));
+        $categories      = $params->get('categories', []);
 
-		// Requested month/year, falling back to the current date
-		$current_month = $input->getInt('month', (int) date('n'));
-		$current_year  = $input->getInt('year', (int) date('Y'));
+        // Requested month/year, falling back to the current date
+        $current_month = $input->getInt('month', (int) date('n'));
+        $current_year  = $input->getInt('year', (int) date('Y'));
 
-		// Validate to keep date calculations within safe ranges
-		$validated     = $businessLogicService->validateMonthYear($current_month, $current_year);
-		$current_month = $validated['month'];
-		$current_year  = $validated['year'];
+        // Validate to keep date calculations within safe ranges
+        $validated     = $businessLogicService->validateMonthYear($current_month, $current_year);
+        $current_month = $validated['month'];
+        $current_year  = $validated['year'];
 
-		// Retrieve the articles only for users allowed to manage content; the
-		// calendar exposes article titles, notes and authors.
-		$articles = [];
-		$user     = $app->getIdentity();
+        // Retrieve the articles only for users allowed to manage content; the
+        // calendar exposes article titles, notes and authors.
+        $articles = [];
+        $user     = $app->getIdentity();
 
-		if ($user && $user->authorise('core.manage', 'com_content')) {
-			$articles = $dataAccessService->getArticlesForMonth($categories, $current_month, $current_year);
-		}
+        if ($user && $user->authorise('core.manage', 'com_content')) {
+            $articles = $dataAccessService->getArticlesForMonth($categories, $current_month, $current_year);
+        }
 
-		// Organize the articles for the calendar grid
-		$articles_by_day = $businessLogicService->organizeArticlesByDay($articles);
-		$calendar_data   = $businessLogicService->prepareCalendarData($current_month, $current_year, $articles_by_day);
+        // Organize the articles for the calendar grid
+        $articles_by_day = $businessLogicService->organizeArticlesByDay($articles);
+        $calendar_data   = $businessLogicService->prepareCalendarData($current_month, $current_year, $articles_by_day);
 
-		$data['moduleclass_sfx'] = $moduleclass_sfx;
-		$data['calendar_data']   = $calendar_data;
-		$data['params']          = $params;
-		$data['today']           = $this->getLocalToday($app, $user);
+        $data['moduleclass_sfx'] = $moduleclass_sfx;
+        $data['calendar_data']   = $calendar_data;
+        $data['params']          = $params;
+        $data['today']           = $this->getLocalToday($app, $user);
 
-		return $data;
-	}
+        return $data;
+    }
 
-	/**
-	 * Resolve "today" as a Y-m-d string in the viewing user's timezone
-	 *
-	 * @param   object  $app   The application instance
-	 * @param   mixed   $user  The current identity (or null)
-	 *
-	 * @return  string  Today's date (Y-m-d) in the display timezone
-	 *
-	 * @since   1.0.1
-	 */
-	private function getLocalToday($app, $user): string
-	{
-		$tz = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
+    /**
+     * Resolve "today" as a Y-m-d string in the viewing user's timezone
+     *
+     * @param   object  $app   The application instance
+     * @param   mixed   $user  The current identity (or null)
+     *
+     * @return  string  Today's date (Y-m-d) in the display timezone
+     *
+     * @since   1.0.1
+     */
+    private function getLocalToday($app, $user): string
+    {
+        $tz = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
 
-		try
-		{
-			return Factory::getDate('now')->setTimezone(new \DateTimeZone($tz))->format('Y-m-d');
-		}
-		catch (\Exception $e)
-		{
-			return Factory::getDate('now')->format('Y-m-d');
-		}
-	}
+        try {
+            return Factory::getDate('now')->setTimezone(new \DateTimeZone($tz))->format('Y-m-d');
+        } catch (\Exception $e) {
+            return Factory::getDate('now')->format('Y-m-d');
+        }
+    }
 }

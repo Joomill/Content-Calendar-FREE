@@ -11,21 +11,23 @@
 namespace Joomill\Module\Contentcalendar\Administrator\Field;
 
 // No direct access.
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 
 class UpgradeField extends FormField
 {
-	protected $type = 'upgrade';
+    protected $type = 'upgrade';
 
-	protected function getInput()
-	{
-		$text = Text::_('MOD_CONTENTCALENDAR_FREE_VERSION');
-		$url  = 'https://www.joomill-extensions.com/extensions/content-planner-calendar-module';
+    protected function getInput()
+    {
+        $text = Text::_('MOD_CONTENTCALENDAR_FREE_VERSION');
+        $url  = 'https://www.joomill-extensions.com/extensions/content-planner-calendar-module';
 
-		return '<div class="alert alert-success">' . $text
-			. ' <a class="alert-link" href="' . $url . '" target="_blank" rel="noopener">Content Calendar PRO</a></div>';
-	}
+        return '<div class="alert alert-success">' . $text
+            . ' <a class="alert-link" href="' . $url . '" target="_blank" rel="noopener">Content Calendar PRO</a></div>';
+    }
 }
