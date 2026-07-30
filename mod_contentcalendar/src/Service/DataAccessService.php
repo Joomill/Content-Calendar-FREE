@@ -116,6 +116,10 @@ class DataAccessService
             $db    = $this->db;
             $query = $db->getQuery(true);
 
+            // publish_up is stored in UTC; the bounds are wall-clock.
+            $startUtc = $this->toUtcBound($start);
+            $endUtc   = $this->toUtcBound($end);
+
             $query->select(
                 [
                     $db->quoteName('a.id'),
@@ -137,8 +141,8 @@ class DataAccessService
                 ->where($db->quoteName('a.publish_up') . ' >= :startDate')
                 ->where($db->quoteName('a.publish_up') . ' < :endDate')
                 ->whereIn($db->quoteName('a.state'), [1, 2])
-                ->bind(':startDate', $start)
-                ->bind(':endDate', $end)
+                ->bind(':startDate', $startUtc)
+                ->bind(':endDate', $endUtc)
                 ->order($db->quoteName('a.publish_up') . ' ASC');
 
             // Apply category filter only when categories are provided
@@ -247,17 +251,8 @@ class DataAccessService
             return;
         }
 
-        $app  = Factory::getApplication();
-        $user = $app->getIdentity();
-        $tz   = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
-
-        try {
-            $zone = new DateTimeZone($tz);
-        } catch (Exception $e) {
-            $zone = new DateTimeZone('UTC');
-        }
-
-        $now = Factory::getDate('now');
+        $zone = $this->getDisplayTimezone();
+        $now  = Factory::getDate('now');
 
         foreach ($articles as $article) {
             if (empty($article->publish_up)) {
@@ -271,7 +266,53 @@ class DataAccessService
             $article->is_future = $date > $now;
 
             // Replace publish_up with the local wall-clock value for display/grouping.
-            $article->publish_up = $date->setTimezone($zone)->format('Y-m-d H:i:s');
+            // Date::format() forces UTC unless it is explicitly asked for local time.
+            $article->publish_up = $date->setTimezone($zone)->format('Y-m-d H:i:s', true);
+        }
+    }
+
+    /**
+     * Resolve the timezone the calendar is displayed in
+     *
+     * The viewing user's timezone wins, falling back to the site offset and
+     * finally UTC. All stored dates are UTC and are converted with this zone.
+     *
+     * @return  DateTimeZone
+     *
+     * @since   1.1.2
+     */
+    private function getDisplayTimezone(): DateTimeZone
+    {
+        $app  = Factory::getApplication();
+        $user = $app->getIdentity();
+        $tz   = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
+
+        try {
+            return new DateTimeZone($tz);
+        } catch (Exception $e) {
+            return new DateTimeZone('UTC');
+        }
+    }
+
+    /**
+     * Convert a wall-clock query bound into the UTC value stored in the database
+     *
+     * publish_up is stored in UTC while the calendar grid is drawn in the display
+     * timezone. Without this conversion an article near midnight falls outside the
+     * month it is shown in.
+     *
+     * @param   string  $localDateTime  Bound as wall-clock time (Y-m-d H:i:s)
+     *
+     * @return  string  The same instant as an SQL datetime in UTC
+     *
+     * @since   1.1.2
+     */
+    private function toUtcBound(string $localDateTime): string
+    {
+        try {
+            return Factory::getDate($localDateTime, $this->getDisplayTimezone())->toSql();
+        } catch (Exception $e) {
+            return $localDateTime;
         }
     }
 

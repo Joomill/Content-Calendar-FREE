@@ -108,7 +108,7 @@ class Dispatcher extends AbstractModuleDispatcher
         $tz = ($user && $user->getParam('timezone')) ? $user->getParam('timezone') : $app->get('offset', 'UTC');
 
         try {
-            return Factory::getDate('now')->setTimezone(new \DateTimeZone($tz))->format('Y-m-d');
+            return Factory::getDate('now')->setTimezone(new \DateTimeZone($tz))->format('Y-m-d', true);
         } catch (\Exception $e) {
             return Factory::getDate('now')->format('Y-m-d');
         }
