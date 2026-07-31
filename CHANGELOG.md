@@ -6,8 +6,6 @@ All notable changes to the Extension are documented in this file.
 - Fix: articles are now placed on the right calendar day on sites in a timezone other than UTC. Joomla's Date::format() forces UTC unless it is explicitly asked for local time, so the conversion of publish_up to the display timezone was silently a no-op, and the month and week queries compared their date bounds against the UTC column without converting them. Both are fixed together: an article scheduled just after midnight no longer shows up on the previous day, and the "today" highlight follows the user's timezone as well.
 - Improvement: PHP file headers updated to the standard Joomla docblock copyright format; code style only, no functional changes
 - Improvement: full code style pass against the Joomla CMS phpcs ruleset (PSR-12): phpcbf auto-fixes for indentation, line endings, brace placement and whitespace, plus phpcs annotations for deliberate exceptions (`_JEXEC` guards, legacy global class names, legacy API naming). Code style only, no functional changes
-
-## 1.1.2 [UNRELEASED]
 - Update: the requested calendar year is now limited to a window of 3 years around the current year (was 1970-2100), so the month navigation cannot be walked through decades of empty months
 
 ## 1.1.1 - 08/07/2026
