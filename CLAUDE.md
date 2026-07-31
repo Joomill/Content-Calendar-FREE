@@ -59,6 +59,7 @@ When editing, do not "fix" these by wiring them up; they are the upsell boundary
 
 ## Conventions / gotchas
 
-- `@since` tags are inconsistent (mix of `1.0.0` and `2.0.0`); the real release version is the `<version>` in `mod_contentcalendar.xml` (currently `1.0.0`). Bump that for releases.
+- `@since` tags are inconsistent (mix of `1.0.0` and `2.0.0`); the real release version is the `<version>` in `mod_contentcalendar.xml` (currently `1.1.2`). Bump that for releases.
 - DB query state filter is hardcoded to published + archived (`whereIn('a.state', [1, 2])`) and includes future-dated articles by design.
+- Timezones: `publish_up` is stored in UTC while the grid is wall-clock, so both directions must be converted. `Joomla\CMS\Date\Date::format($format, $local = false)` **forces UTC** unless `$local` is `true` and Joomla 6 does not restore the zone afterwards, so every `->setTimezone($zone)->format(...)` must pass `true` or the conversion is silently a no-op. Query bounds go the other way through `toUtcBound()`. Fix these two together: converting only one side makes the calendar inconsistent with what the query returned.
 - Languages: full set under `language/<tag>/` (de, en-GB, es, fr, it, nl) — add new strings to **all** of them, especially `en-GB`.
