@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Joomla **administrator** module (`mod_contentcalendar`, `client="administrator"`) that renders a monthly calendar of `com_content` articles in the admin backend, grouped by `publish_up` date. Targets Joomla 5 and 6. This is the **FREE** edition of a commercial product (Joomill Content Calendar PRO); most configurable behavior is intentionally stubbed and gated behind PRO.
 
-The repo root holds a packaging artifact (`mod_contentcalendar_v1.0.0.zip`); the actual source lives in `mod_contentcalendar/`.
+The source lives in `mod_contentcalendar/`; `build.php` writes the installable zip to `dist/`, named after the `<version>` in the manifest.
 
 ## Build / test / install
 

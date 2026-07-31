@@ -194,7 +194,7 @@ class mod_contentcalendarInstallerScript implements InstallerScriptInterface
             // Change Module settings to auto publish it on position icon
             $query  = $db->getQuery(true);
             $fields = array(
-                $db->quoteName('title') . ' = ' . $db->quote('Content Calendar'),
+                $db->quoteName('title') . ' = ' . $db->quote($this->getModuleTitle()),
                 $db->quoteName('published') . ' = 1',
                 $db->quoteName('position') . ' = ' . $db->quote('icon'),
                 $db->quoteName('access') . ' = 3',
@@ -225,6 +225,26 @@ class mod_contentcalendarInstallerScript implements InstallerScriptInterface
             $db->setQuery($query);
             $db->execute();
         }
+    }
+
+    /**
+     * The title given to the auto-created module instance
+     *
+     * Uses the module's own name string, so the instance in the module manager
+     * carries the same name as the extension itself. Falls back to the literal
+     * name when the language file could not be loaded.
+     *
+     * @return  string
+     *
+     * @since   1.2.0
+     */
+    private function getModuleTitle(): string
+    {
+        $this->loadInstallLanguage();
+
+        $title = Text::_('MOD_CONTENTCALENDAR');
+
+        return $title === 'MOD_CONTENTCALENDAR' ? 'Joomill Content Calendar' : $title;
     }
 
     /**
